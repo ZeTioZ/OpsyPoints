@@ -9,7 +9,7 @@ commands:
   chestbuy:
     description: Permet d'acheter des coffres
   exchange:
-    aliases: [echange, convertir, conv, convertisseur]
+    aliases: [echange, convertir, conv, convertisseur, hto]
     description: Convertit de l'argent en jeu avec des points boutique
 permissions:
   points.set:
