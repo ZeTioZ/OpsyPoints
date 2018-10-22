@@ -127,10 +127,10 @@ public class Menu
       if (playersend.equalsIgnoreCase(name))
       {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        int playermoney = (int)((Economy)rsp.getProvider()).getBalance(player);
+        int playermoney = (int)rsp.getProvider().getBalance(player);
         if (playermoney >= PRIX1)
         {
-          ((Economy)rsp.getProvider()).withdrawPlayer(player, PRIX1);
+          rsp.getProvider().withdrawPlayer(player, PRIX1);
           int playermoneyweb = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + name + "';", 1);
           int finplayer = playermoneyweb - PRIX4;
           this.bdd.sendRequest("UPDATE users SET money = " + finplayer + " WHERE pseudo = '" + name + "';");
@@ -157,10 +157,10 @@ public class Menu
       if (playersend.equalsIgnoreCase(name))
       {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        int playermoney = (int)((Economy)rsp.getProvider()).getBalance(player);
+        int playermoney = (int)rsp.getProvider().getBalance(player);
         if (playermoney >= PRIX2)
         {
-          ((Economy)rsp.getProvider()).withdrawPlayer(player, PRIX2);
+          rsp.getProvider().withdrawPlayer(player, PRIX2);
           int playermoneyweb = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + name + "';", 1);
           int finplayer = playermoneyweb - PRIX5;
           this.bdd.sendRequest("UPDATE users SET money = " + finplayer + " WHERE pseudo = '" + name + "';");
@@ -187,10 +187,10 @@ public class Menu
       if (playersend.equalsIgnoreCase(name))
       {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        int playermoney = (int)((Economy)rsp.getProvider()).getBalance(player);
+        int playermoney = (int)rsp.getProvider().getBalance(player);
         if (playermoney >= PRIX3)
         {
-          ((Economy)rsp.getProvider()).withdrawPlayer(player, PRIX3);
+          rsp.getProvider().withdrawPlayer(player, PRIX3);
           int playermoneyweb = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + name + "';", 1);
           int finplayer = playermoneyweb - PRIX6;
           this.bdd.sendRequest("UPDATE users SET money = " + finplayer + " WHERE pseudo = '" + name + "';");

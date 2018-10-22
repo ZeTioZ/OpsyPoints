@@ -11,6 +11,8 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import fr.opsycraft.OpsyPoints.Config;
+import fr.opsycraft.OpsyPoints.DataBase;
 import net.milkbowl.vault.economy.Economy;
 
 public class PointsExchanger implements CommandExecutor {
@@ -53,7 +55,7 @@ public class PointsExchanger implements CommandExecutor {
 						if(intArgument >= 100) {
 							if(playerMoney > intArgument) {
 								if(playerSenderString.equalsIgnoreCase(gameSenderString) && playerSenderString != null) {
-									int pointsAdd = intArgument/100;
+									int pointsAdd = Math.round(intArgument/100);
 									econ.withdrawPlayer(sender.getName(), intArgument);
 						               int playerFinal = playerSenderMoneyInt + pointsAdd;
 						               this.bdd.sendRequest("UPDATE users SET money = " + playerFinal + " WHERE pseudo = '" + sender.getName() + "';");

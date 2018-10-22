@@ -14,7 +14,8 @@ public class main extends JavaPlugin {
 	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
 	private File chestf;
 	
-  	public void onEnable() {
+  	@Override
+	public void onEnable() {
   		saveDefaultConfig();
   		this.chestf = new File(getDataFolder(), "chest.yml");
   		if (!this.chestf.exists()) {
@@ -31,6 +32,7 @@ public class main extends JavaPlugin {
   	}
 
 
+	@Override
 	public void onDisable() {
   		System.out.println("[OpsyPoints] Le plugin vient de s'éteindre");
   		this.bdd.disconnection();

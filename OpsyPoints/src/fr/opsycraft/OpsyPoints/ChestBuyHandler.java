@@ -170,7 +170,8 @@ public class ChestBuyHandler
     }
   }
   
-  public boolean onCommand(CommandSender sender, Command cmd, String msg, String[] args)
+  @Override
+public boolean onCommand(CommandSender sender, Command cmd, String msg, String[] args)
   {
     if ((sender instanceof Player))
     {
