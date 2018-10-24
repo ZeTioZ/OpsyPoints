@@ -23,12 +23,12 @@ public class PointsExchanger implements CommandExecutor {
 	String p = this.config.getString("pass");
 	String db = this.config.getString("dbName");
 	int po = this.config.getInt("port");
+	int bCoins = config.getInt("boughtCoins");
 	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
 	String prefix = "§c[§eEchangeur§c] ";
 
 	
 	public Integer moneyCost() {
-		int bCoins = Integer.parseInt(config.getString("path"));
 		int hours = 1;
 		int hourstoseconds = hours*3600;
 		int basePrice = 100;
@@ -37,7 +37,6 @@ public class PointsExchanger implements CommandExecutor {
 	}
 	
 	private void boughtCalculator(Integer f) {
-		int bCoins = Integer.parseInt(config.getString("path"));
 		int bCoinsFinal = bCoins + f;
 		config.set("path", bCoinsFinal);
 		config.save();
