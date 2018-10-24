@@ -19,7 +19,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public class Menu
   implements Listener
 {
-  Config config = new Config(new File("plugins" + File.separator + "Points" + File.separator + "config.yml"));
+  Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
   String h = this.config.getString("host");
   String n = this.config.getString("name");
   String p = this.config.getString("pass");
@@ -30,7 +30,7 @@ public class Menu
   private ItemStack Item13;
   private ItemStack Item12;
   private ItemStack Item11;
-  Config chestf = new Config(new File("plugins" + File.separator + "Points" + File.separator + "chest.yml"));
+  Config chestf = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "chest.yml"));
   String Name = this.chestf.getString("Chest.Name");
   String N1 = this.chestf.getString("1");
   String N2 = this.chestf.getString("2");

@@ -17,39 +17,37 @@ import net.milkbowl.vault.economy.Economy;
 
 public class PointsExchanger implements CommandExecutor {
 	
-	Config config = new Config(new File("plugins" + File.separator + "Points" + File.separator + "config.yml"));
+	Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
 	String h = this.config.getString("host");
 	String n = this.config.getString("name");
 	String p = this.config.getString("pass");
 	String db = this.config.getString("dbName");
 	int po = this.config.getInt("port");
-	int bCoins = this.config.getInt("boughtCoins");
+	double bCoins = this.config.getInt("boughtCoins");
 	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
 	String prefix = "§c[§eEchangeur§c] ";
 
 	
-	public Integer moneyCost() {
+	public double moneyCost() {
 		int hours = 1;
-		int hourstoseconds = hours*3600;
+		int hourstoseconds = hours * 3600;
 		int basePrice = 100;
-		int finalPrice = Math.round(basePrice*(1+(bCoins/hourstoseconds)));
+		double finalPrice = (Math.round((basePrice * (1 + (bCoins / (double) hourstoseconds)))*100.0))/100.0;
 		return finalPrice;
 	}
 	
 	private void boughtCalculator(Integer f) {
-		int bCoinsFinal = bCoins + f;
-		config.set("boughtCoins", bCoinsFinal);
-		config.save();
+		int bCoinsFinal = (int) bCoins + f;
+		bCoins = bCoinsFinal;
 		return;
 	}
 	
 	public void MoneyFlowIndex(String p) {
 		Player sender = Bukkit.getServer().getPlayer(p);
-		int actualMoneyCostInt = moneyCost();
-		String actualMoneyCostString = Integer.toString(actualMoneyCostInt);
-		sender.sendMessage(prefix + "§2Cours de la monnaie actuel: " + actualMoneyCostString + " H => 1 OC");
+		double actualMoneyCost = moneyCost();
+		sender.sendMessage(prefix + "§2Cours de la monnaie actuel: " + actualMoneyCost + " H => 1 OC");
 		sender.sendMessage(prefix + "§2Pour échanger vos hearts en points, utlisez §d/echange <hearts>");
-		sender.sendMessage(prefix + "§2Montant d'échange minimal: " + actualMoneyCostString + " Heart(s)");
+		sender.sendMessage(prefix + "§2Montant d'échange minimal: " + actualMoneyCost + " Heart(s)");
 		//Index Calculation in BETA !
 	}
 	
@@ -70,18 +68,20 @@ public class PointsExchanger implements CommandExecutor {
 						String playerSenderMoneyString = this.bdd.getString("SELECT money FROM users WHERE pseudo = '" + gameSenderString + "';", 1); //Retrieve the command sender money in a string value from the DB 
 						int playerSenderMoneyInt = Integer.parseInt(playerSenderMoneyString); //Retrieve the command sender money in an int value
 						double playerMoney = econ.getBalance(sender.getName());
+						double doubleArgument = Double.parseDouble(args[0]);
 						int intArgument = Integer.parseInt(args[0]);
-						int actualMoneyIndex = moneyCost();
-						if(intArgument >= actualMoneyIndex) {
-							if(playerMoney > intArgument) {
+						int actualMoneyIndex = (int) Math.round(moneyCost());
+						double actualMoneyIndexCheck = moneyCost();
+						if(doubleArgument >= actualMoneyIndexCheck) {
+							if(playerMoney > doubleArgument) {
 								if(playerSenderString.equalsIgnoreCase(gameSenderString) && playerSenderString != null) {
-									int pointsAdd = Math.round(intArgument/actualMoneyIndex);
-									econ.withdrawPlayer(sender.getName(), intArgument);
+									int pointsAdd = Math.round(intArgument / actualMoneyIndex);
+									econ.withdrawPlayer(sender.getName(), doubleArgument);
 									int playerFinal = playerSenderMoneyInt + pointsAdd;
 									boughtCalculator(pointsAdd);
 									this.bdd.sendRequest("UPDATE users SET money = " + playerFinal + " WHERE pseudo = '" + sender.getName() + "';");
-									sender.sendMessage("§c[Points]§3 Tu viens de recevoir " + pointsAdd + " OpsyCoins !");
-									sender.sendMessage("§c[Points]§3 Tu as maintenant " + playerFinal + " OpsyCoins !");
+									sender.sendMessage(prefix + "Tu viens de recevoir " + pointsAdd + " OpsyCoins !");
+									sender.sendMessage(prefix + "Tu as maintenant " + playerFinal + " OpsyCoins !");
 								}
 								else {
 									sender.sendMessage(prefix + "§cVous n'êtes pas inscrit au site web ! http://opsycraft.fr/");
@@ -92,11 +92,11 @@ public class PointsExchanger implements CommandExecutor {
 							}
 						}
 						else {
-							sender.sendMessage(prefix + "§cVous devez entrer une somme au dessus de 100 Hearts à échanger !");
+							sender.sendMessage(prefix + "§cVous devez entrer une somme au dessus de " + (int) Math.ceil(actualMoneyIndexCheck) + " Hearts à échanger !");
 						}
 					}
 					catch(NumberFormatException e) {
-						sender.sendMessage("[Echangeur] Veuillez entrer le montant sous forme de chiffres !");
+						sender.sendMessage(prefix + "Veuillez entrer le montant sous forme de chiffres !");
 					}
 				}
 				else {

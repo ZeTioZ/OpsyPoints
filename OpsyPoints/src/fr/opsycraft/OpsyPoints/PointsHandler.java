@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class PointsHandler implements CommandExecutor {
 	
-	Config config = new Config(new File("plugins" + File.separator + "Points" + File.separator + "config.yml"));
+	Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
 	String h = this.config.getString("host");
 	String n = this.config.getString("name");
 	String p = this.config.getString("pass");
