@@ -11,5 +11,3 @@ pass: "pass"
 dbName: "dbName"
 port: 3306
 
-########## Money Flow Index Calculator ##########
-boughtCoins: 0
