@@ -38,7 +38,7 @@ public class PointsExchanger implements CommandExecutor {
 	
 	private void boughtCalculator(Integer f) {
 		int bCoinsFinal = bCoins + f;
-		config.set("path", bCoinsFinal);
+		config.set("boughtCoins", bCoinsFinal);
 		config.save();
 		return;
 	}
