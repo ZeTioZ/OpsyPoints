@@ -1,6 +1,7 @@
 package fr.opsycraft.OpsyPoints;
 
 import java.io.File;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class main extends JavaPlugin {
@@ -14,6 +15,9 @@ public class main extends JavaPlugin {
 	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
 	private File chestf;
 	
+	PointsExchanger ptsex = new PointsExchanger(this);
+	double bCoins = this.ptsex.bCoins;
+
   	@Override
 	public void onEnable() {
   		saveDefaultConfig();
@@ -23,18 +27,20 @@ public class main extends JavaPlugin {
   			saveResource("chest.yml", false);
   		}
   		//this.menu = new Menu(this);
-  	    getCommand("points").setExecutor(new PointsHandler());
-  	    getCommand("chestbuy").setExecutor(new ChestBuyHandler());
-  	    getCommand("exchange").setExecutor(new PointsExchanger());
+  	    getCommand("points").setExecutor(new PointsHandler(this));
+  	    getCommand("chestbuy").setExecutor(new ChestBuyHandler(this));
+  	    getCommand("exchange").setExecutor(new PointsExchanger(this));
     
   		this.bdd.connection();
-  		System.out.println("[OpsyPoints] Le plugin vient de s'allumer");
+  		getLogger().info("Le plugin vient de s'allumer");
+  		getLogger().info("Bourse actuelle: " + Double.toString(bCoins));
   	}
 
 
 	@Override
 	public void onDisable() {
-  		System.out.println("[OpsyPoints] Le plugin vient de s'éteindre");
+		config.save();
+  		getLogger().info("Le plugin vient de s'éteindre");
   		this.bdd.disconnection();
   	}
 }

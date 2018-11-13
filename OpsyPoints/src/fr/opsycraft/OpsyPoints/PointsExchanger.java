@@ -1,7 +1,4 @@
 package fr.opsycraft.OpsyPoints;
-
-import java.io.File;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,25 +7,26 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
-
-import fr.opsycraft.OpsyPoints.Config;
 import fr.opsycraft.OpsyPoints.DataBase;
 import net.milkbowl.vault.economy.Economy;
 
 public class PointsExchanger implements CommandExecutor {
-	
-	Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
-	String h = this.config.getString("host");
-	String n = this.config.getString("name");
-	String p = this.config.getString("pass");
-	String db = this.config.getString("dbName");
-	int po = this.config.getInt("port");
-	double bCoins = this.config.getInt("boughtCoins");
-	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
-	String prefix = "§c[§eEchangeur§c] ";
 
+	private main pl;
+	private DataBase bdd;
+	private Config config;
+	int bCoins;
 	
-	public double moneyCost() {
+	public PointsExchanger(main main) {
+		this.pl = main;
+		this.config = pl.config;
+		this.bdd = pl.bdd;
+		this.bCoins = config.getInt("boughtCoins");
+	}
+	
+	String prefix = "§c[§eEchangeur§c] ";
+	
+	private double moneyCost() {
 		int hours = 1;
 		int hourstoseconds = hours * 3600;
 		int basePrice = 100;
@@ -39,10 +37,11 @@ public class PointsExchanger implements CommandExecutor {
 	private void boughtCalculator(Integer f) {
 		int bCoinsFinal = (int) bCoins + f;
 		bCoins = bCoinsFinal;
+		config.set("boughtCoins", bCoins);
 		return;
 	}
 	
-	public void MoneyFlowIndex(String p) {
+	private void MoneyFlowIndex(String p) {
 		Player sender = Bukkit.getServer().getPlayer(p);
 		double actualMoneyCost = moneyCost();
 		sender.sendMessage(prefix + "§2Cours de la monnaie actuel: " + actualMoneyCost + " H => 1 OC");
@@ -75,6 +74,7 @@ public class PointsExchanger implements CommandExecutor {
 						if(doubleArgument >= actualMoneyIndexCheck) {
 							if(playerMoney > doubleArgument) {
 								if(playerSenderString.equalsIgnoreCase(gameSenderString) && playerSenderString != null) {
+									this.bdd.connectIfNot();
 									int pointsAdd = Math.round(intArgument / actualMoneyIndex);
 									econ.withdrawPlayer(sender.getName(), doubleArgument);
 									int playerFinal = playerSenderMoneyInt + pointsAdd;

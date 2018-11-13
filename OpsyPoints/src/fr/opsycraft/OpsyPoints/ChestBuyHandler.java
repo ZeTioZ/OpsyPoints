@@ -1,6 +1,5 @@
 package fr.opsycraft.OpsyPoints;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import net.md_5.bungee.api.ChatColor;
@@ -15,13 +14,15 @@ import org.bukkit.entity.Player;
 public class ChestBuyHandler
   implements CommandExecutor
 {
-  Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
-  String h = this.config.getString("host");
-  String n = this.config.getString("name");
-  String p = this.config.getString("pass");
-  String db = this.config.getString("dbName");
-  int po = this.config.getInt("port");
-  public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
+  private main pl;
+  private Config config;
+  private DataBase bdd;
+  
+  public ChestBuyHandler(main main) {
+	  this.pl = main;
+	  this.config = pl.config;
+	  this.bdd = pl.bdd;
+  }
   String prefix = "§c[§eOpsyChest§c] ";
   
   public void addChestPlayer(String s, String p)

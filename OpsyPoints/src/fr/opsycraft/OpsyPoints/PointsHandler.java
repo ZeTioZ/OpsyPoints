@@ -1,6 +1,5 @@
 package fr.opsycraft.OpsyPoints;
 
-import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,13 +10,12 @@ import org.bukkit.entity.Player;
 
 public class PointsHandler implements CommandExecutor {
 	
-	Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
-	String h = this.config.getString("host");
-	String n = this.config.getString("name");
-	String p = this.config.getString("pass");
-	String db = this.config.getString("dbName");
-	int po = this.config.getInt("port");
-	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
+	private main pl;
+	private DataBase bdd;
+	public PointsHandler(main main) {
+		this.pl = main;
+		this.bdd = pl.bdd;
+	}
 	
   	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

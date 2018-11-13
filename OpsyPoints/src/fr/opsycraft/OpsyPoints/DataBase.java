@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.bukkit.Bukkit;
+
 public class DataBase
 {
   private String host;
@@ -37,12 +39,12 @@ public class DataBase
     try
     {
       this.conn = DriverManager.getConnection(this.url, this.user, this.pass);
-      System.out.println("[Points] La base de donnée est bien liée.");
+      Bukkit.getServer().getLogger().info("[OpsyPoints] Connexion à la BDD réussie.");
     }
     catch (SQLException e)
     {
       e.printStackTrace();
-      System.out.println("[Points] Impossible de se connecter à la BDD.");
+      Bukkit.getServer().getLogger().info("[OpsyPoints] Impossible de se connecter à la BDD.");
     }
   }
   
@@ -51,7 +53,7 @@ public class DataBase
     return this.conn != null;
   }
   
-  private void connectIfNot()
+  public void connectIfNot()
   {
     if (!connected()) {
       connection();
@@ -125,12 +127,12 @@ public class DataBase
       Statement state = this.conn.createStatement();
       state.executeUpdate(request);
       state.close();
-      System.out.println("[Points] L'opération a réussis.");
+      Bukkit.getServer().getLogger().info("[OpsyPoints] L'opération a réussis.");
     }
     catch (SQLException e)
     {
       e.printStackTrace();
-      System.out.println("[Points] L'opération a échouée.");
+      Bukkit.getServer().getLogger().info("[OpsyPoints] L'opération a échouée.");
     }
   }
 }
