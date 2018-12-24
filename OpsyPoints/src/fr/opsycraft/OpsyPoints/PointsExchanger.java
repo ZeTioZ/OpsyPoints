@@ -1,4 +1,6 @@
 package fr.opsycraft.OpsyPoints;
+import java.io.File;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,19 +10,21 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import fr.opsycraft.OpsyPoints.DataBase;
+import fr.opsycraft.OpsyPoints.Config;
 import net.milkbowl.vault.economy.Economy;
 
 public class PointsExchanger implements CommandExecutor {
 
-	private main pl;
-	private DataBase bdd;
-	private Config config;
-	int bCoins;
+	double bCoins;
+	Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
+	private String h = config.getString("host");
+	private String n = config.getString("name");
+	private String p = config.getString("pass");
+	private String db = config.getString("dbName");
+	int po = config.getInt("port");
+	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
 	
 	public PointsExchanger(main main) {
-		this.pl = main;
-		this.config = pl.config;
-		this.bdd = pl.bdd;
 		this.bCoins = config.getInt("boughtCoins");
 	}
 	
@@ -30,7 +34,7 @@ public class PointsExchanger implements CommandExecutor {
 		int hours = 1;
 		int hourstoseconds = hours * 3600;
 		int basePrice = 100;
-		double finalPrice = (Math.round((basePrice * (1 + (bCoins / (double) hourstoseconds)))*100.0))/100.0;
+		double finalPrice = (Math.round((basePrice * (1.0 + (bCoins / (double) hourstoseconds)))*100.0))/100.0;
 		return finalPrice;
 	}
 	
@@ -59,13 +63,13 @@ public class PointsExchanger implements CommandExecutor {
 					MoneyFlowIndex(sender.getName());
 				}
 				else if(args.length == 1) {
-					try {
+					try 
+					{
 						RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
 						Economy econ = rsp.getProvider();
 						String gameSenderString = sender.getName(); //Retrieve the command sender in a string value
 						String playerSenderString = this.bdd.getString("SELECT pseudo FROM users WHERE pseudo = '" + gameSenderString + "';", 1); //Retrieve the command sender in a string value from the DB
-						String playerSenderMoneyString = this.bdd.getString("SELECT money FROM users WHERE pseudo = '" + gameSenderString + "';", 1); //Retrieve the command sender money in a string value from the DB 
-						int playerSenderMoneyInt = Integer.parseInt(playerSenderMoneyString); //Retrieve the command sender money in an int value
+						int playerSenderMoneyInt = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + gameSenderString + "';", 1); //Retrieve the command sender money in a string value from the DB 
 						double playerMoney = econ.getBalance(sender.getName());
 						double doubleArgument = Double.parseDouble(args[0]);
 						int intArgument = Integer.parseInt(args[0]);
@@ -74,7 +78,6 @@ public class PointsExchanger implements CommandExecutor {
 						if(doubleArgument >= actualMoneyIndexCheck) {
 							if(playerMoney > doubleArgument) {
 								if(playerSenderString.equalsIgnoreCase(gameSenderString) && playerSenderString != null) {
-									this.bdd.connectIfNot();
 									int pointsAdd = Math.round(intArgument / actualMoneyIndex);
 									econ.withdrawPlayer(sender.getName(), doubleArgument);
 									int playerFinal = playerSenderMoneyInt + pointsAdd;
@@ -96,7 +99,7 @@ public class PointsExchanger implements CommandExecutor {
 						}
 					}
 					catch(NumberFormatException e) {
-						sender.sendMessage(prefix + "Veuillez entrer le montant sous forme de chiffres !");
+						sender.sendMessage(prefix + "Merci de rentrer un chiffre !");
 					}
 				}
 				else {

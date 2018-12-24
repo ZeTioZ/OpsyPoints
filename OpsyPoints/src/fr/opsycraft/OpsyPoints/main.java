@@ -13,27 +13,50 @@ public class main extends JavaPlugin {
 	String db = this.config.getString("dbName");
 	int po = this.config.getInt("port");
 	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
-	private File chestf;
+	//private File chestf;
 	
 	PointsExchanger ptsex = new PointsExchanger(this);
 	double bCoins = this.ptsex.bCoins;
+	
+	public void indexRecalc() {
+		double nCoins = (bCoins * 0.75);
+		if (nCoins <= 0)
+		{
+			nCoins = 0;
+			getLogger().info("La bourse est à son point le plus bas !");
+		}
+		else {
+			getLogger().info("La bourse a été recalculée !");
+			getLogger().info("Ancienne Bourse : " + Double.toString(bCoins));
+		}
+		bCoins = nCoins;
+		this.ptsex.bCoins = nCoins;
+		config.set("boughtCoins", (int) nCoins);
+	}
 
-  	@Override
+  	@SuppressWarnings("deprecation")
+	@Override
 	public void onEnable() {
   		saveDefaultConfig();
-  		this.chestf = new File(getDataFolder(), "chest.yml");
+  		/*this.chestf = new File(getDataFolder(), "chest.yml");
   		if (!this.chestf.exists()) {
   			this.chestf.getParentFile().mkdirs();
   			saveResource("chest.yml", false);
-  		}
+  		}*/
   		//this.menu = new Menu(this);
   	    getCommand("points").setExecutor(new PointsHandler(this));
   	    getCommand("chestbuy").setExecutor(new ChestBuyHandler(this));
   	    getCommand("exchange").setExecutor(new PointsExchanger(this));
     
   		this.bdd.connection();
+  		java.util.Date date = new java.util.Date();
+  		if (date.getDay() == 1) 
+  		{
+  			indexRecalc();
+  		}
   		getLogger().info("Le plugin vient de s'allumer");
   		getLogger().info("Bourse actuelle: " + Double.toString(bCoins));
+  		
   	}
 
 
@@ -43,4 +66,5 @@ public class main extends JavaPlugin {
   		getLogger().info("Le plugin vient de s'éteindre");
   		this.bdd.disconnection();
   	}
+	
 }

@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 
@@ -93,6 +94,34 @@ public class DataBase
     return request;
   }
   
+  public ArrayList<String> getList(String request, int ci)
+  {
+    connectIfNot();
+    try
+    {
+      Statement state = this.conn.createStatement();
+      ResultSet result = state.executeQuery(request);
+      ArrayList<String> reqlist = new ArrayList<String>();
+      try
+      {
+        while (result.next()) {
+          reqlist.add(result.getString(ci));
+        }
+        return reqlist;
+      }
+      catch (SQLException e)
+      {
+        e.printStackTrace();
+      }
+      return null;
+    }
+    catch (SQLException e)
+    {
+      e.printStackTrace();
+    }
+	return null;
+  }
+  
   public int getInt(String request, int ci)
   {
     connectIfNot();
@@ -133,6 +162,22 @@ public class DataBase
     {
       e.printStackTrace();
       Bukkit.getServer().getLogger().info("[OpsyPoints] L'opération a échouée.");
+    }
+  }
+  public Boolean sendListRequest(String request)
+  {
+    connectIfNot();
+    try
+    {
+      Statement state = this.conn.createStatement();
+      state.executeUpdate(request);
+      state.close();
+      return true;
+    }
+    catch (SQLException e)
+    {
+      e.printStackTrace();
+      return false;
     }
   }
 }

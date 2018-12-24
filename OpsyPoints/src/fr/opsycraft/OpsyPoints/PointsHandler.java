@@ -1,5 +1,8 @@
 package fr.opsycraft.OpsyPoints;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,13 +13,18 @@ import org.bukkit.entity.Player;
 
 public class PointsHandler implements CommandExecutor {
 	
-	private main pl;
-	private DataBase bdd;
-	public PointsHandler(main main) {
-		this.pl = main;
-		this.bdd = pl.bdd;
-	}
+	Config config = new Config(new File("plugins" + File.separator + "OpsyPoints" + File.separator + "config.yml"));
+	private String h = config.getString("host");
+	private String n = config.getString("name");
+	private String p = config.getString("pass");
+	private String db = config.getString("dbName");
+	int po = config.getInt("port");
+	public DataBase bdd = new DataBase(this.h, this.db, this.n, this.p);
 	
+	public PointsHandler(main main) {
+		return;
+	}
+
   	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(sender instanceof Player) {
@@ -25,55 +33,45 @@ public class PointsHandler implements CommandExecutor {
 					String name = sender.getName();
 					int bc = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + name + "';", 1);
 					sender.sendMessage("§c[Points]§3 Tu as " + bc + " OpsyCoins !");
-					return true;
-					/*sender.sendMessage("§3/points check [joueur] - Affiche les points boutique actuels.");
-		          	sender.sendMessage("§3/points send <joueur> <montant> - Envoyer ses points à un autre joueur.");
-		          	if (sender.hasPermission("points.set")) {
-		            	sender.sendMessage("§3/points set <joueur> <montant> - Fixer les points d'un joueur.");
-		            	sender.sendMessage("§3/points add <joueur> <montant> - Ajouter des points à un joueur.");
-		            	sender.sendMessage("§3/points remove <joueur> <montant> - Retirer des points à un joueur.");
-		          	}
-		            	sender.sendMessage("§3/points shop  - Ouvre le shop en jeu.");*/
 				}
 				else if (args.length == 1) {
 					if (args[0].equalsIgnoreCase("check")) {
 						String name = sender.getName();
 						int bc = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + name + "';", 1);
 						sender.sendMessage("§c[Points]§3 Tu as " + bc + " OpsyCoins !");
-						return true;
 					}
-					if (args[0].equalsIgnoreCase("send")) {
+					else if (args[0].equalsIgnoreCase("send")) {
 						sender.sendMessage("§c[Points]§3 /points send <joueur> <montant>");
-						return true;
+						return false;
 					}
-					if (args[0].equalsIgnoreCase("set")) {
+					else if (args[0].equalsIgnoreCase("set")) {
 						if (sender.hasPermission("points.set")) {
 							sender.sendMessage("§c[Points]§3 /points set <joueur> <montant>");
 						}
 						else {
 							sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
 						}
-						return true;
+						return false;
 					}
-					if (args[0].equalsIgnoreCase("add")) {
+					else if (args[0].equalsIgnoreCase("add")) {
 						if (sender.hasPermission("points.add")) {
 							sender.sendMessage("§c[Points]§3 /points add <joueur> <montant>");
 					}
 						else {
 							sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
 						}
-						return true;
+						return false;
 					}
-					if (args[0].equalsIgnoreCase("remove")) {
+					else if (args[0].equalsIgnoreCase("remove")) {
 						if (sender.hasPermission("points.remove")) {
 							sender.sendMessage("§c[Points]§3 /points remove <joueur> <montant>");
 						}
 						else {
 		          			sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
 		          		}
-						return true;
+						return false;
 		        	}
-		         /* if (args[0].equalsIgnoreCase("shop"))
+		            /*else if (args[0].equalsIgnoreCase("shop"))
 		          	{
 		            	if (sender.hasPermission("points.shop")) {
 		              		this.menu.show(sender.getPlayer());
@@ -81,7 +79,7 @@ public class PointsHandler implements CommandExecutor {
 		            	else {
 		              		sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
 		            	}
-		            	return true;
+		            	return false;
 		        	}*/
 		        	else {
 			        	sender.sendMessage("§3/points check [joueur] - Affiche les points boutique actuels.");
@@ -96,22 +94,22 @@ public class PointsHandler implements CommandExecutor {
 		        	}
 		    	}
 				else if(args.length == 2) {
+					int intArgument = Integer.parseInt(args[1]);
 					if(args[0].equalsIgnoreCase("check")) {
 						String playerTargetString = this.bdd.getString("SELECT pseudo FROM users WHERE pseudo = '" + args[1] + "';", 1); //Retrieve target string from DB
 						if(playerTargetString.equalsIgnoreCase(args[1])) {
-				            int playerTargetMoneyInt = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + args[1] + "';", 1); //Retrieve target money int from DB
-				            sender.sendMessage("§c[Points]§3 " + args[1] + " a " + playerTargetMoneyInt + " OpsyCoins !");
-				            return true;
+							int playerTargetMoneyInt = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + playerTargetString + "';", 1);
+							sender.sendMessage("§c[Points]§3 " + args[1] + " a " + playerTargetMoneyInt + " OpsyCoins !");
 						}
 				        else
 				        {
 				          sender.sendMessage("§c[Points]§3 " + args[1] + " n'est pas inscrit sur le site");
 				        }
 					}
-					if (args[0].equalsIgnoreCase("send") && !args[1].equalsIgnoreCase("")) {
+					else if (args[0].equalsIgnoreCase("send") && !args[1].equalsIgnoreCase("")) {
 						sender.sendMessage("§c[Points]§3 /points send <joueur> <montant>");
 					}
-					if (args[0].equalsIgnoreCase("set") && !args[1].equalsIgnoreCase("")) {
+					else if (args[0].equalsIgnoreCase("set") && !args[1].equalsIgnoreCase("")) {
 						if (sender.hasPermission("points.set")) {
 							sender.sendMessage("§c[Points]§3 /points set <joueur> <montant>");
 						}
@@ -119,7 +117,7 @@ public class PointsHandler implements CommandExecutor {
 							sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
 						}
 					}
-					if (args[0].equalsIgnoreCase("add") && !args[1].equalsIgnoreCase("")) {
+					else if (args[0].equalsIgnoreCase("add") && !args[1].equalsIgnoreCase("")) {
 						if (sender.hasPermission("points.add")) {
 							sender.sendMessage("§c[Points]§3 /points add <joueur> <montant>");
 						}
@@ -127,9 +125,27 @@ public class PointsHandler implements CommandExecutor {
 							sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
 						}
 					}
-					if (args[0].equalsIgnoreCase("remove") && !args[1].equalsIgnoreCase("")) {
+					else if (args[0].equalsIgnoreCase("remove") && !args[1].equalsIgnoreCase("")) {
 						if (sender.hasPermission("points.remove")) {
 							sender.sendMessage("§c[Points]§3 /points remove <joueur> <montant>");
+						}
+						else {
+							sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
+						}
+					}
+					else if (args[0].equalsIgnoreCase("giveall") && !args[1].equalsIgnoreCase("") && intArgument > 0) {
+						if(sender.hasPermission("points.giveall")) {
+							ArrayList<String> Users = this.bdd.getList("SELECT pseudo FROM users", 1);
+							for (String SUser : Users) {
+								int SUserMoney = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + SUser + "';", 1);
+								int playerFinal = SUserMoney + intArgument;
+								this.bdd.sendListRequest("UPDATE users SET money = " + playerFinal + " WHERE pseudo = '" + SUser + "';");
+								if(this.bdd.sendListRequest("UPDATE users SET money = " + playerFinal + " WHERE pseudo = '" + SUser + "';") == false) {
+									sender.sendMessage("§c[Points]§3 Une erreur est survenue pendant l'éxécution de la commande !");
+									break;
+								}
+							}
+							sender.sendMessage("§c[Points]§3 L'opération a été éxécutée avec succès ! Tout le monde à obtenue " + intArgument + " OpsyCoins !");
 						}
 						else {
 							sender.sendMessage("§c[Points]§3 Vous n'avez pas la permission de faire cela !");
@@ -250,7 +266,7 @@ public class PointsHandler implements CommandExecutor {
 						}
 					}
 					catch(NumberFormatException ex) {
-						sender.sendMessage("§c[Points]§3 Veuillez entrer le montant sous forme de chiffres  !");
+						sender.sendMessage("§c[Points]§3 Merci d'entrer un chiffre !");
 					}
 				}
 			}
@@ -258,6 +274,7 @@ public class PointsHandler implements CommandExecutor {
 		else if(sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender){
 			try {
 				if(cmd.getName().equalsIgnoreCase("points")) {
+					this.bdd.connectIfNot();
 					if(args.length == 0) {
 						sender.sendMessage("§3/points check [joueur] - Affiche les points boutique actuels.");
 						sender.sendMessage("§3/points send <joueur> <montant> - Envoyer ses points à un autre joueur.");
@@ -270,15 +287,15 @@ public class PointsHandler implements CommandExecutor {
 						if (args[0].equalsIgnoreCase("check")) {
 							sender.sendMessage("§c[Points]§3 Pour utiliser cette commande, veuillez indiquer le pseudo d'un joueur !");
 							sender.sendMessage("§c[Points]§3 /points check <joueur>");
-							return true;
+							return false;
 						}
 						if (args[0].equalsIgnoreCase("send")) {
 							sender.sendMessage("§c[Points]§3 Cette commande n'est utilisable qu'en jeu !");
-							return true;
+							return false;
 						}
 						if (args[0].equalsIgnoreCase("set")) {
 							sender.sendMessage("§c[Points]§3 /points set <joueur> <montant>");
-							return true;
+							return false;
 						}
 						if (args[0].equalsIgnoreCase("add")) {
 							sender.sendMessage("§c[Points]§3 /points add <joueur> <montant>");
@@ -304,7 +321,7 @@ public class PointsHandler implements CommandExecutor {
 							if(playerTargetString.equalsIgnoreCase(args[1])) {
 								int playerTargetMoneyInt = this.bdd.getInt("SELECT money FROM users WHERE pseudo = '" + args[1] + "';", 1); //Retrieve target money int from DB
 								sender.sendMessage("§c[Points]§3 " + args[1] + " a " + playerTargetMoneyInt + " OpsyCoins !");
-								return true;
+								return false;
 							}
 							else
 							{
@@ -389,7 +406,7 @@ public class PointsHandler implements CommandExecutor {
 				}
 			}
 			catch(NumberFormatException ex) {
-				sender.sendMessage("§c[Points]§3 Veuillez inscrire le montant sous forme de chiffre !");
+				sender.sendMessage("§c[Points]§3 Merci d'entrer un chiffre !");
 			}
 		}
 		return false;
