@@ -30,7 +30,7 @@ public class PointsExchanger implements CommandExecutor {
 	
 	String prefix = "§c[§eEchangeur§c] ";
 	
-	private double moneyCost() {
+	public double moneyCost() {
 		int hours = 1;
 		int hourstoseconds = hours * 3600;
 		int basePrice = 100;

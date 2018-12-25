@@ -3,6 +3,7 @@ package fr.opsycraft.OpsyPoints;
 import java.io.File;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import fr.opsycraft.OpsyPoints.PointsExchanger;
 
 public class main extends JavaPlugin {
 	
@@ -27,7 +28,8 @@ public class main extends JavaPlugin {
 		}
 		else {
 			getLogger().info("La bourse a été recalculée !");
-			getLogger().info("Ancienne Bourse : " + Double.toString(bCoins));
+			getLogger().info("Anciens bCoins : " + Double.toString(bCoins));
+			getLogger().info("Ancienne bourse : " + Double.toString(this.ptsex.moneyCost()));
 		}
 		bCoins = nCoins;
 		this.ptsex.bCoins = nCoins;
@@ -55,7 +57,8 @@ public class main extends JavaPlugin {
   			indexRecalc();
   		}
   		getLogger().info("Le plugin vient de s'allumer");
-  		getLogger().info("Bourse actuelle: " + Double.toString(bCoins));
+  		getLogger().info("bCoins actuel: " + Double.toString(bCoins));
+  		getLogger().info("Nouvelle bourse : " + Double.toString(this.ptsex.moneyCost()));
   		
   	}
 

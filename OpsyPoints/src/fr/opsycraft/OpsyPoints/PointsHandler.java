@@ -142,7 +142,7 @@ public class PointsHandler implements CommandExecutor {
 								this.bdd.sendListRequest("UPDATE users SET money = " + playerFinal + " WHERE pseudo = '" + SUser + "';");
 								if(this.bdd.sendListRequest("UPDATE users SET money = " + playerFinal + " WHERE pseudo = '" + SUser + "';") == false) {
 									sender.sendMessage("§c[Points]§3 Une erreur est survenue pendant l'éxécution de la commande !");
-									break;
+									return false;
 								}
 							}
 							sender.sendMessage("§c[Points]§3 L'opération a été éxécutée avec succès ! Tout le monde à obtenue " + intArgument + " OpsyCoins !");
